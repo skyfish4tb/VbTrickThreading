@@ -1683,6 +1683,7 @@ Private Function GetThreadsList( _
     Dim hSnap   As Long
     Dim tEntry  As THREADENTRY32
     Dim lIndex  As Long
+    Dim hCurrentProcessId As Long
     
     hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0)
     If hSnap = -1 Then Exit Function
@@ -1692,14 +1693,14 @@ Private Function GetThreadsList( _
     tEntry.dwSize = Len(tEntry)
     
     If Thread32First(hSnap, tEntry) Then
-        
+        hCurrentProcessId = GetCurrentProcessId()
         Do
             
             If lIndex > UBound(lTIDs) Then
                 ReDim Preserve lTIDs(lIndex + 256)
             End If
             
-            If tEntry.th32OwnerProcessID = GetCurrentProcessId() Then
+            If tEntry.th32OwnerProcessID = hCurrentProcessId Then
             
                 lTIDs(lIndex) = tEntry.th32ThreadID
                 lIndex = lIndex + 1
